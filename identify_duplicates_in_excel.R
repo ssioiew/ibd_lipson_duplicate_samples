@@ -24,7 +24,7 @@ library(writexl)
 
 # Load All Path Files
 input_file_path <- "C:/Old Volume/Work/Project Work/Poseidon/Poseidon Project/redundance_samples/"
-plink_file_path <- "C:/Old Volume/Work/Project Work/Poseidon/Poseidon Project/ibd_lipson_duplicate_samples/" # หา path ที่มี fam file
+plink_file_path <- "C:/Old Volume/Work/Project Work/Poseidon/Poseidon Project/ibd_lipson_duplicate_samples/full_data/" # หา path ที่มี fam file
 output_file_path <- "C:/Users/patch/Desktop/"
 
 
@@ -48,25 +48,26 @@ all_duplicates <- df %>%
   
   # สร้าง Flag (ติดป้าย) สำหรับ Master ID ที่ซ้ำกัน
   group_by(`Master ID`) %>% 
-    mutate(is_master_dup = n() > 1) %>%   # ถ้าตรงเงื่อนไขจะเป็น TRUE ถ้าไม่ตรงจะเป็น FALSE
-    ungroup() %>% 
+  mutate(is_master_dup = n() > 1) %>%   # ถ้าตรงเงื่อนไขจะเป็น TRUE ถ้าไม่ตรงจะเป็น FALSE
+  ungroup() %>% 
   
   # สร้าง Flag สำหรับ Genetic ID ที่ซ้ำกัน
   group_by(Genetic_ID_Base) %>% 
-    mutate(is_genetic_dup = n() > 1) %>% 
-    ungroup() %>% 
+  mutate(is_genetic_dup = n() > 1) %>% 
+  ungroup() %>% 
   
   # กรองเอาเฉพาะที่เข้าข่ายอย่างน้อย 1 เงื่อนไข
   filter(is_master_dup | is_genetic_dup) %>%  # ที่เป็น TRUE เท่านั้น
   
   # ลบคอลัมน์ที่ไม่ได้ใช้ออกไป
   select(-Genetic_ID_Base, -is_master_dup, -is_genetic_dup) %>% 
-  arrange(`Master ID`, `Genetic ID`)
+  arrange(`Master ID`, `Genetic ID`) %>% 
+  distinct()
 
 cat("--- ตารางที่รวม duplicate ทั้งหมดมี", nrow(all_duplicates), "แถว ---\n")
 
 # บันทึกไฟล์
-# write_xlsx(all_duplicates, path = file.path(output_file_path, "Lipson_duplicates_report.xlsx")) # excel
+write_xlsx(all_duplicates, path = file.path(output_file_path, "Lipson_duplicates_report.xlsx")) # excel
 
 
 # Step 3: Create a PLINK File (.fam) for Keeped. --------------------------
