@@ -47,7 +47,7 @@ all_duplicates <- df %>%
   
   # สร้าง Flag สำหรับ Genetic ID ที่ซ้ำกัน
   group_by(Genetic_ID_Base) %>% 
-    mutate(is_genetic_dup = n() > 1) %>% 
+    mutate(is_genetic_dup = n() > 1) %>% adfsdfj;
     ungroup() %>% 
   
   # กรองเอาเฉพาะที่เข้าข่ายอย่างน้อย 1 เงื่อนไข
